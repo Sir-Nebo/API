@@ -21,6 +21,7 @@ const userDB = require('../modele/userDB');
  *              password
  */
 module.exports.login = async (req, res) => {
+    console.log(req.body);
     const {mail, password} = req.body;
     if(mail === undefined || password === undefined){
         res.status(400).json({error : "Données obligatoire non inséré"});
