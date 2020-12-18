@@ -1,0 +1,29 @@
+{
+  "name": "api_loantool",
+  "version": "1.0.0",
+  "description": "api for loantool application",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "initDB": "node scripts/JS/initDB.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "genDoc": "node ./swagger/swagger_jsdoc.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.0.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-promise-router": "^4.0.1",
+    "pg": "^8.4.2",
+    "process": "^0.11.10"
+  },
+  "devDependencies": {
+    "cors": "^2.8.5",
+    "jsonwebtoken": "^8.5.1",
+    "nodemon": "^2.0.6",
+    "swagger-jsdoc": "^6.0.0-rc.3"
+  }
+}
