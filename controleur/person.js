@@ -2,6 +2,7 @@ const pool = require('../modele/database');
 const personModele = require('../modele/personDB');
 const addressModele = require('../modele/addressDB')
 const utils = require('../utils/utils');
+const {beginSQL, commitSQL, rollBackSQL} = require("../utils/utils");
 
 /**
  * @swagger
@@ -402,6 +403,7 @@ module.exports.createPerson = async (req, res) => {
         const genderChar = (gender === undefined ? null : gender.charAt(0));
         let streetDB;
         try {
+            await beginSQL(client);
             const personExist = await personModele.personExist(client, mail);
             if (!personExist){
                 let {rows:countryDB} = await addressModele.getCountry(client, country);
@@ -418,22 +420,27 @@ module.exports.createPerson = async (req, res) => {
                         streetDB = streets[0];
                     } else {
                         let {rows: streets} = await addressModele.getStreet(client, cityDB.id, streetname);
+                        streetDB = streets[0];
                         if(streets[0] === undefined){
                             await addressModele.createStreet(client, streetname, cityDB);
-                            const {rows: streets} = await addressModele.getStreet(client, cityDB.id, streetname);
+                            let {rows: streets} = await addressModele.getStreet(client, cityDB.id, streetname);
+                            streetDB = streets[0];
                         }
-                        streetDB = streets[0];
                     }
                     await personModele.createPerson(client, lastname, firstname, birthDate, genderChar, numhouse, streetDB.id, mail, password, false, phonenumber, 0);
+                    await commitSQL(client);
                     res.sendStatus(201);
                 } else {
+                    await rollBackSQL(client);
                     res.status(400).json({error:"Le pays n'existe ou n'est pas pris en charge par l'application"});
                 }
 
             }else{
+                await rollBackSQL(client);
                 res.status(400).json({error:"L'utilisateur existe déjà !"});
             }
         } catch (e){
+            await rollBackSQL(client);
             console.log(e);
             res.status(500).json({error : "Problème de connexion au serveur"});
         } finally {
