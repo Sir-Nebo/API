@@ -43,5 +43,5 @@ module.exports.getToolByToolNameAndCity = async (client, toolName, cityId) => {
 }
 
 module.exports.getAllToolByOwner = async (client, id) => {
-    return await client.query("SELECT * FROM Tool WHERE owner = $1", [id]);
+    return await client.query("SELECT t.*, tn.url as toolnameurl, tn.name as toolname FROM Tool t, toolName tn WHERE t.owner = $1 and t.toolname = tn.id", [id]);
 }

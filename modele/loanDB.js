@@ -46,5 +46,5 @@ module.exports.getAllStates = async (client) => {
 }
 
 module.exports.getLoanByTool = async (client, toolId) =>{
-    return await client.query("SELECT dateend FROM loan WHERE tool = $1 AND state = 2",[toolId]);
+    return await client.query("SELECT l.dateend, p.firstname as borrowerfirstname, p.lastname as borrowerlastname, p.rating as borrowerrating, p.mail as borrowermail FROM loan l, person p WHERE tool = $1 AND state = 2 AND l.borrower = p.id",[toolId]);
 }
