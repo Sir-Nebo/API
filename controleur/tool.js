@@ -26,6 +26,26 @@ const loanModel = require('../modele/loanDB');
  *              owner:
  *                  type: integer
  *                  description: identifiant du propriétaire de l'outil
+ *      toolWithLoanDateEnd:
+ *          type: object
+ *          properties:
+ *              id:
+ *                  type: integer
+ *              brand:
+ *                  type: string
+ *                  description: marque de l'outil
+ *              size:
+ *                  type: string
+ *                  description: taille de l'outil
+ *              toolName:
+ *                  type: integer
+ *                  description: identifiant du ToolName
+ *              owner:
+ *                  type: integer
+ *                  description: identifiant du propriétaire de l'outil
+ *              loandateend:
+ *                  type: string
+ *                  description: date de fin de loan
  *      toolByToolNameAndCity:
  *          type: object
  *          properties:
@@ -374,14 +394,26 @@ module.exports.getToolByToolNameAndCityAndCountry = async (req, res) => {
  *          content:
  *              application/json:
  *                  schema:
- *                      $ref: '#/components/schemas/tool'
+ *                      $ref: '#/components/schemas/toolWithLoanDateEnd'
  */
 module.exports.getToolByOwner = async (req, res) => {
     const client = await pool.connect();
-    const {id} = req.params;
-    if(id !== undefined){
+    const {ownerId} = req.params;
+    if(ownerId !== undefined){
         try {
-            const {rows:tools} = await toolModel.getAllToolByOwner(client, id);
+            let {rows:tools} = await toolModel.getAllToolByOwner(client, ownerId);
+            if(tools !== undefined){
+                for (let iTool in tools) {
+                    const {rows : loans} = await loanModel.getLoanByTool(client, tools[iTool].id);
+                    if(loans[0] !== undefined) {
+                        tools[iTool].loandateend = loans[0].dateend;
+                        tools[iTool].borrowerlastname = loans[0].borrowerlastname;
+                        tools[iTool].borrowerfirstname = loans[0].borrowerfirstname;
+                        tools[iTool].borrowermail = loans[0].borrowermail;
+                        tools[iTool].borrowerrating = loans[0].borrowerrating;
+                    }
+                }
+            }
             res.json(tools);
         } catch (e) {
             console.log(e);
