@@ -378,10 +378,10 @@ module.exports.getToolByToolNameAndCityAndCountry = async (req, res) => {
  */
 module.exports.getToolByOwner = async (req, res) => {
     const client = await pool.connect();
-    const {id} = req.params;
-    if(id !== undefined){
+    const {ownerId} = req.params;
+    if(ownerId !== undefined){
         try {
-            const {rows:tools} = await toolModel.getAllToolByOwner(client, id);
+            const {rows:tools} = await toolModel.getAllToolByOwner(client, ownerId);
             res.json(tools);
         } catch (e) {
             console.log(e);
