@@ -7,7 +7,6 @@
     "start": "node app.js",
     "dev": "nodemon app.js",
     "initDB": "node scripts/JS/initDB.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "genDoc": "node ./swagger/swagger_jsdoc.js"
   },
   "author": "",
