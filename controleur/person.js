@@ -2,7 +2,7 @@ const pool = require('../modele/database');
 const personModele = require('../modele/personDB');
 const addressModele = require('../modele/addressDB')
 const utils = require('../utils/utils');
-const {beginSQL, commitSQL, rollBackSQL} = require("../utils/utils");
+const {beginSQL, commitSQL, rollBackSQL, getHash} = require("../utils/utils");
 
 /**
  * @swagger
@@ -200,18 +200,38 @@ module.exports.getAllPerson = async (req, res) => {
  */
 module.exports.updatePerson = async (req, res) => {
     const client = await pool.connect();
-    const {lastName, firstName, birthdateStr, genderStr, numHouse, street, mail, password, isAdminStr, phoneNumber, ratingStr} = req.body;
-    const birthdate = utils.changeToDate(birthdateStr);
-    const gender = genderStr.charAt(0);
-    const isAdmin = Boolean(isAdminStr);
-    const rating = parseInt(ratingStr);
+    console.log(req.body);
+    let {lastname, firstname, birthdate, gender, numhouse, streetname, mail, password, isadmin, phonenumber, rating, cityname, zipcode, country, mailforupdate} = req.body;
+    birthdate = utils.changeToDate(birthdate);
+    gender = gender.charAt(0);
+    isadmin = Boolean(isadmin);
     try{
         if (mail === undefined){
             res.status(400).json({error: "Adresse mail non définie"});
         } else {
-            const clientExist = await personModele.personExist(client, mail);
-            if (clientExist){
-                await personModele.updatePerson(client, lastName, firstName, birthdate, gender, numHouse, street, mail, password, isAdmin, phoneNumber, rating);
+            let {rows:personExist} = await personModele.getPerson(client, mailforupdate);
+            personExist = personExist[0];
+            if (personExist !== undefined){
+                if (password !== personExist.password){ //Si le mot de passe n'a pas été modifié, un string hashé sera reçu et les 2 chaine seront égale
+                    password = await getHash(password);
+                }
+                let {rows:cityExist} = await addressModele.getCity(client, cityname, country);
+                cityExist = cityExist[0];
+                if (cityExist === undefined){
+                    await addressModele.createCity(client, zipcode, cityname, country);
+                    let cityPromise = await addressModele.getCity(client, cityname, country);
+                    cityExist = cityPromise.rows;
+                    cityExist = cityExist[0];
+                }
+                let {rows:streetExist} = await addressModele.getStreet(client, cityExist.id, streetname);
+                streetExist = streetExist[0];
+                if (streetExist === undefined){
+                    await addressModele.createStreet(client, streetname, cityExist.id);
+                    let streetPromise = await addressModele.getStreet(client, cityExist.id, streetname);
+                    streetExist = streetPromise.rows;
+                    streetExist = streetExist[0];
+                }
+                await personModele.updatePerson(client, mail, lastname, firstname, birthdate, gender, numhouse, streetExist.id, password, isadmin, phonenumber, rating, mailforupdate);
                 res.sendStatus(204);
             } else {
                 res.status(404).json({error: "Personne inexistante"});;
@@ -305,6 +325,7 @@ module.exports.getPerson = async (req, res) => {
             const {rows: persons} = await personModele.getPerson(client, mail);
             let person = persons[0];
             if (person !== undefined){
+                console.log(person)
                 res.json(person);
             } else {
                 res.status(404).json({error:"L'utilisateur n'existe pas"});

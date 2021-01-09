@@ -1,3 +1,5 @@
+SET TIMEZONE=-2;
+
 DROP TABLE IF EXISTS Country CASCADE;
 CREATE TABLE Country(
     name varchar,

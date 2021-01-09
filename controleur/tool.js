@@ -145,11 +145,13 @@ const loanModel = require('../modele/loanDB');
  */
 module.exports.createTool = async (req, res) => {
     const client = await pool.connect();
-    const {brand, size, toolName, email} = req.body;
+    const {brand, size, toolname, ownermail} = req.body;
+    console.log(toolname)
     try{
-        if (email !== undefined && await personModel.personExist(client, email)) {
-            const {rows: person} = await personModel.getPerson(client, email)
-            await toolModel.createTool(client, brand, size, toolName, person[0].id);
+        if (ownermail !== undefined && toolname !== null && await personModel.personExist(client, ownermail)) {
+            const {rows: person} = await personModel.getPerson(client, ownermail)
+            const {rows: toolName} = await toolNameModel.getToolNameByName(client, toolname);
+            await toolModel.createTool(client, brand, size, toolName[0].id, person[0].id);
             res.sendStatus(201);
         } else {
             res.status(404).json({error : "Le mail n'a pas été insérer ou la personne n'existe pas"});

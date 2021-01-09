@@ -3,7 +3,7 @@ const saltRounds = 10;
 
 module.exports.changeToDate = (date) => {
         const dateParts = date.split("/");
-        return new Date(dateParts[2],dateParts[1],dateParts[0]);
+        return new Date(dateParts[2],dateParts[1]-1,dateParts[0]);
 }
 
 module.exports.getDateToStr = (date) => {

@@ -37,10 +37,11 @@ module.exports.getPersonById = async (client, id) => {
     );
 }
 
-module.exports.updatePerson = async (client, mail, lastName, firstName, birthdate, gender, numhouse, street, password, isAdmin, phoneNumber, rating) => {
+module.exports.updatePerson = async (client, mail, lastName, firstName, birthdate, gender, numhouse, street, password, isAdmin, phoneNumber, rating, mailUpdate) => {
+    console.log(typeof street);
     await client.query(
         "UPDATE Person SET lastName = $1, firstName = $2, birthdate = $3, gender = $4, numhouse = $5, street = $6, mail = $7, password = $8, isAdmin = $9, phoneNumber = $10, rating = $11 WHERE mail = $12",
-        [lastName, firstName, birthdate, gender, numhouse, street, mail, password, isAdmin, phoneNumber, rating, mail]
+        [lastName, firstName, birthdate, gender, numhouse, street, mail, password, isAdmin, phoneNumber, rating, mailUpdate]
     );
 }
 

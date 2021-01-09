@@ -1,4 +1,4 @@
-require("dotenv").config();
+/*require("dotenv").config();
 const process = require("process");
 const pg = require("pg");
 const Pool = pg.Pool;
@@ -14,9 +14,8 @@ const pool = new Pool({
     connectionString
 });
 
-module.exports = pool;
-
-/*require("dotenv").config();
+module.exports = pool;*/
+require("dotenv").config();
 const process = require("process");
 const pg = require("pg");
 const Pool = pg.Pool;
@@ -29,4 +28,4 @@ const pool = new Pool({
     port: process.env.DB_PORT,
 });
 
-module.exports = pool;*/
+module.exports = pool;
