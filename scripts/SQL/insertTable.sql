@@ -147,19 +147,19 @@ INSERT INTO street (name, city) VALUES ('Avenue des Tilleuls', 1);
 INSERT INTO street (name, city) VALUES ('Rue de Temploux', 2);
 
 INSERT INTO person(lastname, firstname, birthdate, phonenumber, gender, numhouse, street, mail, password, rating, isadmin) VALUES ('Delaive', 'Benjamin', to_date('1999-02-22', 'YYYY-MM-DD'), '+32 496/94.80.92', 'm', 54, 1, 'etu41778@henallux.be', '$2b$10$igdHvJi6iXTmQohmPG6LS.2rMZuwOHSLSrIIN6/TVjUC55xVZm8AC', 3, true);
-INSERT INTO person(lastname, firstname, birthdate, phonenumber, gender, numhouse, street, mail, password, rating, isadmin) VALUES ('Harmand Pierard', 'Louise', to_date('1999-12-21', 'YYYY-MM-DD'), '+32 476/91.87.88', 'f', 6, 2, 'etu39951@henallux.be', '$2b$10$igdHvJi6iXTmQohmPG6LS.2rMZuwOHSLSrIIN6/TVjUC55xVZm8AC', 0, true);
+INSERT INTO person(lastname, firstname, birthdate, phonenumber, gender, numhouse, street, mail, password, rating, isadmin) VALUES ('Harmand Pierard', 'Louise', to_date('1999-12-21', 'YYYY-MM-DD'), '+32 476/91.87.88', 'f', 6, 2, 'etu39951@henallux.be', '$2b$10$igdHvJi6iXTmQohmPG6LS.2rMZuwOHSLSrIIN6/TVjUC55xVZm8AC', 4, true);
 
 INSERT INTO tool (brand, size, toolname, owner) VALUES ('Caterpillar', 5, 68, 1);
 INSERT INTO tool (brand, size, toolname, owner) VALUES ('Caterpillar', 4, 50, 1);
 INSERT INTO tool (brand, size, toolname, owner) VALUES ('Caterpillar', 8, 53, 1);
 INSERT INTO tool (brand, size, toolname, owner) VALUES ('Caterpillar', 2, 12, 1);
 INSERT INTO tool (brand, size, toolname, owner) VALUES ('Caterpillar', 10, 2, 1);
-INSERT INTO tool (brand, size, toolname, owner) VALUES ('Caterpillar', 5, 10, 2);
+INSERT INTO tool (brand, size, toolname, owner) VALUES ('Caterpillar', 5, 2, 2);
 INSERT INTO tool (brand, size, toolname, owner) VALUES ('Caterpillar', 5, 7, 2);
 INSERT INTO tool (brand, size, toolname, owner) VALUES ('Caterpillar', 5, 26, 2);
 INSERT INTO tool (brand, size, toolname, owner) VALUES ('Caterpillar', 5, 37, 2);
 
 INSERT INTO loan (datestart, dateend, state, tool, borrower) VALUES (to_date('2020-05-12', 'YYYY-MM-DD'), to_date('2022-12-12', 'YYYY-MM-DD'), 2, 1, 2);
 INSERT INTO loan (datestart, dateend, state, tool, borrower) VALUES (to_date('2021-05-12', 'YYYY-MM-DD'), to_date('2035-12-12', 'YYYY-MM-DD'), 2, 6, 1);
-INSERT INTO loan (datestart, dateend, state, tool, borrower) VALUES (to_date('2020-08-12', 'YYYY-MM-DD'), to_date('2021-01-12', 'YYYY-MM-DD'), 4, 3, 2);
-INSERT INTO loan (datestart, dateend, state, tool, borrower) VALUES (to_date('2020-05-17', 'YYYY-MM-DD'), to_date('2020-12-12', 'YYYY-MM-DD'), 2, 8, 1);
+INSERT INTO loan (datestart, dateend, state, tool, borrower) VALUES (to_date('2020-08-12', 'YYYY-MM-DD'), to_date('2021-01-12', 'YYYY-MM-DD'), 2, 3, 2);
+INSERT INTO loan (datestart, dateend, state, tool, borrower) VALUES (to_date('2020-05-17', 'YYYY-MM-DD'), to_date('2020-12-12', 'YYYY-MM-DD'), 1, 8, 1);

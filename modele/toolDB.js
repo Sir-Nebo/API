@@ -32,9 +32,13 @@ module.exports.getToolByToolName = async (client, toolName) => {
     );
 }
 
+module.exports.getToolByToolNameAndOwner = async (client, toolName, owner) => {
+    return await client.query("SELECT t.*, tn.url as toolnameurl, tn.name as toolname FROM Tool t, toolName tn WHERE t.toolname = $1 and t.owner = $2 and t.toolname = tn.id", [toolName, owner]);
+}
+
 module.exports.getToolByToolNameAndCity = async (client, toolName, cityId) => {
     return await client.query(
-        "SELECT t.*, tn.name as toolName, tn.url as toolNameUrl, o.lastname as ownerLastName, o.firstname as ownerFirstName, o.mail as ownerMail, o.rating as ownerRating, o.numhouse, s.name as street, ci.zipcode, ci.name as city, co.name as country" +
+        "SELECT t.*, tn.name as toolName, tn.url as toolNameUrl, o.lastname as ownerLastName, o.firstname as ownerFirstName, o.mail as ownerMail, o.rating as ownerRating, o.numhouse as ownernumhouse, s.name as ownerstreet, ci.zipcode as ownerzipcode, ci.name as ownercity, co.name as ownercountry" +
         " FROM Tool t, toolname tn, person o, street s, city ci, country co" +
         " WHERE t.toolname = tn.id AND tn.id = $1 and o.id = t.owner AND" +
         " t.owner in (SELECT p.id FROM person p WHERE p.street in (SELECT s.id FROM street s WHERE s.city = $2))" +

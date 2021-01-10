@@ -47,6 +47,8 @@ const router = new Router;
  */
 router.get('/:city&:country&:toolName&:wantNotAvailable', Identification.identification, toolControleur.getToolByToolNameAndCityAndCountry);
 
+router.get('/:toolName&:wantNotAvailable&:id', Identification.identification, toolControleur.getToolByToolNameAndAvailable);
+
 /**
  * @swagger
  * /tool/{ownerId}:
@@ -159,7 +161,7 @@ router.get('/', Identification.identification, toolControleur.getAllTools);
  *              description: Erreur serveur
  *
  */
-router.delete('/', Identification.identification, toolControleur.deleteTool);
+router.delete('/:id', Identification.identification, toolControleur.deleteTool);
 
 /**
  * @swagger

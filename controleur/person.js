@@ -325,7 +325,6 @@ module.exports.getPerson = async (req, res) => {
             const {rows: persons} = await personModele.getPerson(client, mail);
             let person = persons[0];
             if (person !== undefined){
-                console.log(person)
                 res.json(person);
             } else {
                 res.status(404).json({error:"L'utilisateur n'existe pas"});

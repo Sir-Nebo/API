@@ -316,6 +316,42 @@ module.exports.getAllLoans = async (req, res) => {
  *      UserNotFound:
  *          description : L'utilisateur n'existe pas
  */
+module.exports.getAllLoansWaitingByOwner = async (req,res) => {
+    const client = await pool.connect();
+    const {loanerMail} = req.params;
+    try{
+        if(loanerMail === undefined){
+            res.status(404).json("Pas reçu les informations");
+        }else {
+            if (!await personModele.personExist(client, loanerMail)) {
+                res.status(404).json("Client n'existe pas");
+            } else {
+                const {rows:loaner} = await personModele.getPerson(client, loanerMail);
+                const {rows: loans} = await loanModele.getAllLoansWaitingByOwner(client, loaner[0].mail);
+                res.json(loans);
+            }
+        }
+    }catch(error){
+        console.log(error);
+        res.status(500).json({error : "Problème de connexion au serveur"});
+    }finally {
+        client.release();
+    }
+}
+
+/**
+ *@swagger
+ *components:
+ *  responses:
+ *      LoansFoundByBorrower:
+ *          description: renvois tous les prêts pour un emprunteur
+ *          content :
+ *              application/json:
+ *                  schema:
+ *                       $ref: '#/components/schemas/loanByPerson'
+ *      UserNotFound:
+ *          description : L'utilisateur n'existe pas
+ */
 module.exports.getAllLoansAcceptedByBorrower = async (req,res) => {
     const client = await pool.connect();
     const {borrowerMail} = req.params;

@@ -182,7 +182,7 @@ module.exports.createTool = async (req, res) => {
  */
 module.exports.deleteTool = async (req, res) => {
     const client = await pool.connect();
-    const {id} = req.body;
+    const {id} = req.params;
     try{
         if (id !== undefined) {
             await toolModel.deleteTool(client, id);
@@ -343,6 +343,54 @@ module.exports.getToolByToolName = async (req, res) => {
     }
 }
 
+module.exports.getToolByToolNameAndAvailable = async (req, res) => {
+    const client = await pool.connect();
+    const {toolName, wantNotAvailable, id} = req.params;
+    if(toolName !== undefined && wantNotAvailable !== undefined){
+        try {
+            let tools;
+            if (toolName === "Tous"){
+                let toolsPromise = await toolModel.getAllToolByOwner(client, id);
+                tools = toolsPromise.rows;
+                console.log(tools)
+            } else {
+                let toolNamesPromise = await toolNameModel.getToolNameByName(client, toolName);
+                let toolNames = toolNamesPromise.rows;
+                toolNames = toolNames[0];
+                let toolsPromise = await toolModel.getToolByToolNameAndOwner(client, toolNames.id, id);
+                tools = toolsPromise.rows;
+            }
+            if (tools !== undefined){
+                for (let iTool = 0; iTool < tools.length; iTool++){
+                    const {rows : loans} = await loanModel.getLoanByTool(client, tools[iTool].id);
+                    if(loans[0] !== undefined) {
+                        if (wantNotAvailable === "true") {
+                            tools[iTool].loandateend = loans[0].dateend;
+                            tools[iTool].borrowerlastname = loans[0].borrowerlastname;
+                            tools[iTool].borrowerfirstname = loans[0].borrowerfirstname;
+                            tools[iTool].borrowermail = loans[0].borrowermail;
+                            tools[iTool].borrowernumhouse = loans[0].borrowernumhouse;
+                            tools[iTool].borrowerstreet = loans[0].borrowerstreet;
+                            tools[iTool].borrowercity = loans[0].borrowercity;
+                            tools[iTool].borrowercountry = loans[0].borrowercountry;
+                            tools[iTool].borrowerzipcode = loans[0].borrowerzipcode;
+                        } else {
+                            tools.splice(iTool, 1);
+                            iTool--;
+                        }
+                    }
+                }
+            }
+            res.json(tools)
+        } catch (e) {
+            console.log(e);
+            res.status(500).json({error : "Problème de connexion au serveur"});
+        } finally {
+            client.release();
+        }
+    }
+}
+
 /**
  *@swagger
  *components:
@@ -413,6 +461,18 @@ module.exports.getToolByOwner = async (req, res) => {
                         tools[iTool].borrowerfirstname = loans[0].borrowerfirstname;
                         tools[iTool].borrowermail = loans[0].borrowermail;
                         tools[iTool].borrowerrating = loans[0].borrowerrating;
+                        tools[iTool].borrowerstreet = loans[0].borrowerstreet;
+                        tools[iTool].borrowercity = loans[0].borrowercity;
+                        tools[iTool].borrowercountry = loans[0].borrowercountry;
+                        tools[iTool].borrowerzipcode = loans[0].borrowerzipcode;
+                        tools[iTool].borrowernumhouse = loans[0].borrowernumhouse;
+                    }
+                    const {rows : owner} = await personModel.getPersonById(client, tools[iTool].owner);
+                    if (owner[0] !== undefined) {
+                        tools[iTool].ownerlastname = owner[0].lastname;
+                        tools[iTool].ownerfirstname = owner[0].firstname;
+                        tools[iTool].ownermail = owner[0].mail;
+                        tools[iTool].ownerrating = owner[0].rating;
                     }
                 }
             }

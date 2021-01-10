@@ -58,6 +58,8 @@ router.get('/borrower/:borrowerMail',Identification.identification, loanControle
  */
 router.get('/loaner/:loanerMail',Identification.identification, loanControleur.getAllLoansAcceptedByOwner);
 
+router.get('/waiting/loaner/:loanerMail',Identification.identification, loanControleur.getAllLoansWaitingByOwner);
+
 /**
  * @swagger
  * /loan:

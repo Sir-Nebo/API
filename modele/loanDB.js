@@ -25,6 +25,10 @@ module.exports.getAllLoansAcceptedByOwner = async(client, owner) => {
     return await client.query("SELECT l.*, t.brand as toolbrand, t.size as toolsize, b.lastname as borrowerLastName, b.firstname as borrowerFirstName, b.rating as borrowerRating, b.mail as borrowerMail, o.lastname as ownerLastName, o.firstname as ownerFirstName, o.rating as ownerRating, o.mail as ownerMail, tn.name as toolName, tn.url as toolNameUrl FROM loan l, tool t, person b, person o, toolname tn where l.tool in (select id from tool where owner = $1) and l.state = 2 and l.tool = t.id and t.owner = o.id and l.borrower = b.id and t.toolname = tn.id", [owner]);
 }
 
+module.exports.getAllLoansWaitingByOwner = async(client, owner) => {
+    return await client.query("SELECT l.*, t.brand as toolbrand, t.size as toolsize, b.lastname as borrowerLastName, b.firstname as borrowerFirstName, b.rating as borrowerRating, b.mail as borrowerMail, o.lastname as ownerLastName, o.firstname as ownerFirstName, o.rating as ownerRating, o.mail as ownerMail, tn.name as toolName, tn.url as toolNameUrl FROM loan l, tool t, person b, person o, toolname tn where o.mail = $1 and l.state = 1 and l.tool = t.id and t.owner = o.id and l.borrower = b.id and t.toolname = tn.id ", [owner]);
+}
+
 module.exports.deleteLoan = async (client, id) => {
     await client.query("DELETE FROM loan where id = $1", [id]);
 }
@@ -46,5 +50,9 @@ module.exports.getAllStates = async (client) => {
 }
 
 module.exports.getLoanByTool = async (client, toolId) =>{
-    return await client.query("SELECT l.dateend, p.firstname as borrowerfirstname, p.lastname as borrowerlastname, p.rating as borrowerrating, p.mail as borrowermail FROM loan l, person p WHERE tool = $1 AND state = 2 AND l.borrower = p.id",[toolId]);
+    return await client.query(
+        "SELECT l.dateend, p.firstname as borrowerfirstname, p.lastname as borrowerlastname, p.rating as borrowerrating, p.mail as borrowermail, p.numhouse as borrowernumhouse, s.name as borrowerstreet, ci.zipcode as borrowerzipcode, ci.name as borrowercity, co.name as borrowercountry " +
+        "FROM loan l, person p, street s, city ci, country co " +
+        "WHERE l.tool = $1 AND l.state = 2 AND l.borrower = p.id " +
+        "AND s.id = p.street AND ci.id = s.city AND co.name = ci.country",[toolId]);
 }
